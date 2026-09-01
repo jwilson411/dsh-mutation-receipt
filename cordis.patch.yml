@@ -1,0 +1,60 @@
+# The dsh-mutation-receipt bundle patch.
+#
+# `dsh plugin --profile <name> add …` installs this package into the profile,
+# sees the `dsh.bundle.patch` field in its package.json, and appends the
+# package to the profile manifest's ordered `dsh.profile.bundles` list. This
+# file is then composed as one layer over the bundles below it (dsh-base and
+# the mode bundle) and under the profile's own cordis.patch.yml.
+#
+# One insert, one row: the receipt. A later layer — the profile's
+# cordis.patch.yml or a `--patch` overlay — addresses the row by its `id` to
+# point it at a workspace and a receipt file. Note that an id-targeted patch
+# REPLACES the row's whole `config` rather than merging into it, so an override
+# must restate every key it means to keep.
+#
+# config:
+#
+#   workspaceRoot   The directory every recorded path is stored relative to.
+#                   Defaults to the harness process's working directory. A
+#                   mutation outside this root is REFUSED, not recorded: the
+#                   root is the scope of the receipt, not a hint. Set it to the
+#                   repository or project the agent is working in, never to `/`
+#                   or to a home directory — a root that wide would let an
+#                   absolute machine path be stored as a relative one.
+#
+#   receiptPath     The append-only JSONL file. Relative paths resolve against
+#                   the process working directory. Defaults to
+#                   ./mutation-receipt.jsonl. Parent directories are created.
+#                   Put it OUTSIDE workspaceRoot if you would rather the
+#                   receipt not appear in the receipt.
+#
+#   sessionId       Stamped onto every line this deployment records, and
+#                   filterable by the tool. Optional; lines carry null without
+#                   it. A host that knows its own session id should pass it per
+#                   call instead.
+#
+#   limit           How many trailing lines `mutation_receipt` returns when the
+#                   caller names no limit. Default 20.
+#
+# Environment fallbacks — DSH_MUTATION_RECEIPT_ROOT, DSH_MUTATION_RECEIPT_PATH,
+# DSH_MUTATION_RECEIPT_SESSION_ID — apply only where this config is silent. The
+# patch is the deployment's stated intent, so it wins over an ambient variable.
+#
+# Note that lines are written by a host calling `recordMutation(...)`. This RC
+# of @deepseek-ai/dsh-tools publishes no filesystem-mutation session event, so
+# there is nothing for the plugin to subscribe to and it does not pretend
+# otherwise. An unconfigured install registers the tool and reports an empty
+# receipt, honestly, rather than reporting a receipt it silently never filled.
+#
+# A profile states its own workspace in its own layer:
+#
+#   - id: mutation-receipt
+#     config:
+#       workspaceRoot: /srv/agent/workspace
+#       receiptPath: /var/log/dsh/mutation-receipt.jsonl
+#       limit: 50
+
+- insert:
+    - id: mutation-receipt
+      name: dsh-mutation-receipt
+      config: {}

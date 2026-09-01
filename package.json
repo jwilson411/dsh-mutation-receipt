@@ -1,0 +1,61 @@
+{
+  "name": "dsh-mutation-receipt",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness plugin: a citable append-only JSONL of filesystem touches — path, op, sha256 before and after — carrying no file contents",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "mutation-receipt": "./bin/mutation-receipt.js"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./receipt": "./src/receipt.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin",
+    "src",
+    "cordis.patch.yml",
+    "LICENSE",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jwilson411/dsh-mutation-receipt.git"
+  },
+  "homepage": "https://github.com/jwilson411/dsh-mutation-receipt#readme",
+  "bugs": {
+    "url": "https://github.com/jwilson411/dsh-mutation-receipt/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "plugin",
+    "receipt",
+    "audit",
+    "filesystem",
+    "sha256"
+  ],
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-tools": "^0.1.1-rc.2"
+  },
+  "devDependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.1-rc.2"
+  }
+}
